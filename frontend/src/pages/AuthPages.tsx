@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { ArrowRight, Goal, LockKeyhole, Mail, UserRound } from 'lucide-react'
+import { ArrowRight, Eye, EyeOff, Goal, LockKeyhole, Mail, UserRound } from 'lucide-react'
 import { ApiError } from '../lib/api'
 import { useAuth } from '../contexts/AuthContext'
 import { FieldError, Spinner } from '../components/common'
@@ -12,6 +12,7 @@ export function LoginPage() {
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   if (loading) return <Spinner />
   if (user) return <Navigate to="/dashboard" replace />
@@ -43,7 +44,7 @@ export function LoginPage() {
       <form className="auth-form" onSubmit={submit} noValidate>
         {message && <div className="error-banner" role="alert">{message}</div>}
         <label className="field"><span>Email address</span><div className="input-with-icon"><Mail size={17} /><input autoComplete="email" type="email" value={form.email} placeholder="you@example.com" onChange={(event) => setForm({ ...form, email: event.target.value })} /></div><FieldError errors={errors} name="email" /></label>
-        <label className="field"><span>Password</span><div className="input-with-icon"><LockKeyhole size={17} /><input autoComplete="current-password" type="password" value={form.password} placeholder="Enter your password" onChange={(event) => setForm({ ...form, password: event.target.value })} /></div><FieldError errors={errors} name="password" /></label>
+        <label className="field"><span>Password</span><div className="input-with-icon"><LockKeyhole size={17} /><input autoComplete="current-password" type={showPassword ? 'text' : 'password'} value={form.password} placeholder="Enter your password" onChange={(event) => setForm({ ...form, password: event.target.value })} /><button className="password-visibility" type="button" aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword} onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button></div><FieldError errors={errors} name="password" /></label>
         <button className="button button-primary button-wide" disabled={busy}>{busy ? 'Signing in…' : <>Sign in <ArrowRight size={17} /></>}</button>
       </form>
       <p className="auth-switch">New to RefTrack? <Link to="/register">Create a referee account</Link></p>
