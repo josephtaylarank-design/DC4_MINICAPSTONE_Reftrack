@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { CalendarDays, ChevronDown, ClipboardList, LayoutDashboard, LogOut, MapPin, Menu, ShieldCheck, Users, X } from 'lucide-react'
+import { CalendarDays, ChevronDown, ClipboardList, Goal, LayoutDashboard, LogOut, MapPin, Menu, ShieldCheck, Users, X } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
 
@@ -41,7 +41,7 @@ export function AppShell() {
     <div className="app-shell">
       {mobileOpen && <button className="mobile-scrim" aria-label="Close navigation" onClick={() => setMobileOpen(false)} />}
       <aside className={`sidebar ${mobileOpen ? 'sidebar-open' : ''}`}>
-        <div className="brand-lockup"><div className="brand-mark brand-letter">R</div><div><strong>reftrack</strong><span>OFFICIALS PORTAL</span></div><button className="icon-button mobile-close" aria-label="Close navigation" onClick={() => setMobileOpen(false)}><X size={18} /></button></div>
+        <div className="brand-lockup"><div className="brand-mark brand-whistle"><Goal size={20} strokeWidth={2.2} /></div><div className="brand-name"><strong>reftrack</strong><span>Officials portal</span></div><button className="icon-button mobile-close" aria-label="Close navigation" onClick={() => setMobileOpen(false)}><X size={18} /></button></div>
         <div className="sidebar-label">WORKSPACE</div>
         <nav className="side-nav">
           {links.map(({ to, label, icon: Icon }) => (
