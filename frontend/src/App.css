@@ -15,6 +15,8 @@
 /* App frame */
 /* Hi Ma'am Angel*/
 /*kapoy jud sha ay*/
+/*for real*/
+
 .app-shell { min-height: 100vh; }
 .sidebar { background: var(--navy); color: #dae6e3; display: flex; flex-direction: column; height: 100vh; left: 0; padding: 27px 17px 18px; position: fixed; top: 0; width: 248px; z-index: 20; }
 .brand-lockup { align-items: center; display: flex; gap: 11px; padding: 0 10px 36px; }
