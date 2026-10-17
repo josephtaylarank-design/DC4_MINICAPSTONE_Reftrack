@@ -36,6 +36,10 @@ npm run dev
 
 Open the local Vite URL printed in the terminal (normally `http://localhost:5173`). Set `VITE_API_URL` in `frontend/.env` if the API uses another URL.
 
+## Browser drafts
+
+Unsubmitted form entries and filter values are saved in the current browser so they survive a refresh. Drafts are kept separately per signed-in user and cleared after a successful save or form reset. Passwords and password confirmations are never saved. Drafts stay in this browser's local storage until cleared; clear this site's browser data to remove them.
+
 ## Checks
 
 ```powershell

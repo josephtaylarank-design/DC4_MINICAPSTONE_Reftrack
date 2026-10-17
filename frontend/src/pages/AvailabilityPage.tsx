@@ -3,12 +3,18 @@ import { CalendarDays, Check, Clock3, Plus, Trash2, X } from 'lucide-react'
 import { ConfirmDialog, EmptyState, FieldError, formatDate, formatTime, PageHeader, Spinner } from '../components/common'
 import { useToast } from '../contexts/ToastContext'
 import { ApiError, get, post, remove } from '../lib/api'
+import { useAuth } from '../contexts/AuthContext'
+import { formDraftKey, useFormDraft } from '../hooks/useFormDraft'
 import type { Availability, Pagination } from '../types'
 
+const blankAvailabilityForm = { date: '', start: '08:00', end: '18:00', is_available: 'true', notes: '' }
+const availabilityDraftFields = ['date', 'start', 'end', 'is_available', 'notes'] as const
+
 export function AvailabilityPage() {
+  const { user } = useAuth()
   const { notify } = useToast()
   const [items, setItems] = useState<Pagination<Availability> | null>(null)
-  const [form, setForm] = useState({ date: '', start: '08:00', end: '18:00', is_available: 'true', notes: '' })
+  const [form, setForm, clearDraft] = useFormDraft(formDraftKey('availability-form', user?.id), blankAvailabilityForm, availabilityDraftFields)
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
@@ -46,7 +52,8 @@ export function AvailabilityPage() {
         notes: form.notes || null,
       })
       notify('success', 'Availability saved.')
-      setForm({ ...form, notes: '' })
+      clearDraft()
+      setForm(blankAvailabilityForm)
       await load()
     } catch (reason) {
       if (reason instanceof ApiError) setErrors({ ...nextErrors, ...reason.fields })

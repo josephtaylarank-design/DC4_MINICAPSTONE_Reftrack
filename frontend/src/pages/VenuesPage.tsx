@@ -1,17 +1,22 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Building2, MapPin, Pencil, Plus, Save, Trash2, X } from 'lucide-react'
 import { ConfirmDialog, EmptyState, FieldError, PageHeader, Spinner } from '../components/common'
+import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
 import { ApiError, get, post, put, remove } from '../lib/api'
+import { formDraftKey, useFormDraft } from '../hooks/useFormDraft'
 import type { Venue } from '../types'
 
 const blankForm = { name: '', address: '', court_count: '1' }
+const blankVenueDraft = { form: blankForm, editingId: null as number | null }
+const venueDraftFields = ['form', 'editingId'] as const
 
 export function VenuesPage() {
+  const { user } = useAuth()
   const { notify } = useToast()
   const [venues, setVenues] = useState<Venue[] | null>(null)
-  const [form, setForm] = useState(blankForm)
-  const [editing, setEditing] = useState<number | null>(null)
+  const [draft, setDraft, clearDraft] = useFormDraft(formDraftKey('venue-form', user?.id), blankVenueDraft, venueDraftFields)
+  const { form, editingId: editing } = draft
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
@@ -32,14 +37,13 @@ export function VenuesPage() {
   useEffect(() => { void load() }, [])
 
   function startEdit(venue: Venue) {
-    setEditing(venue.id)
-    setForm({ name: venue.name, address: venue.address, court_count: String(venue.court_count) })
+    setDraft({ form: { name: venue.name, address: venue.address, court_count: String(venue.court_count) }, editingId: venue.id })
     setErrors({})
   }
 
   function resetForm() {
-    setEditing(null)
-    setForm(blankForm)
+    clearDraft()
+    setDraft(blankVenueDraft)
     setErrors({})
   }
 
@@ -89,9 +93,9 @@ export function VenuesPage() {
         <section className="panel form-panel venue-form-panel">
           <div className="panel-heading"><div><h2>{editing ? 'Edit venue' : 'Add a venue'}</h2><p>{editing ? 'Update the venue details.' : 'Add a court or gym to RefTrack.'}</p></div><span className="panel-heading-icon"><Building2 size={19} /></span></div>
           <form className="stacked-form" onSubmit={submit} noValidate>
-            <label className="field"><span>Venue name <b>*</b></span><input value={form.name} placeholder="e.g. Central Sports Hall" onChange={(event) => setForm({ ...form, name: event.target.value })} /><FieldError errors={errors} name="name" /></label>
-            <label className="field"><span>Street address <b>*</b></span><input value={form.address} placeholder="e.g. 100 Main Street" onChange={(event) => setForm({ ...form, address: event.target.value })} /><FieldError errors={errors} name="address" /></label>
-            <label className="field"><span>Number of courts</span><input type="number" min="1" max="100" value={form.court_count} onChange={(event) => setForm({ ...form, court_count: event.target.value })} /><FieldError errors={errors} name="court_count" /></label>
+            <label className="field"><span>Venue name <b>*</b></span><input value={form.name} placeholder="e.g. Central Sports Hall" onChange={(event) => setDraft({ ...draft, form: { ...form, name: event.target.value } })} /><FieldError errors={errors} name="name" /></label>
+            <label className="field"><span>Street address <b>*</b></span><input value={form.address} placeholder="e.g. 100 Main Street" onChange={(event) => setDraft({ ...draft, form: { ...form, address: event.target.value } })} /><FieldError errors={errors} name="address" /></label>
+            <label className="field"><span>Number of courts</span><input type="number" min="1" max="100" value={form.court_count} onChange={(event) => setDraft({ ...draft, form: { ...form, court_count: event.target.value } })} /><FieldError errors={errors} name="court_count" /></label>
             <div className="form-actions"><button className="button button-primary" disabled={busy}>{busy ? 'Saving…' : editing ? <><Save size={15} /> Save venue</> : <><Plus size={16} /> Add venue</>}</button>{editing && <button type="button" className="button button-quiet" onClick={resetForm}><X size={15} /> Cancel</button>}</div>
           </form>
         </section>

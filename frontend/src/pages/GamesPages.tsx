@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { ArrowLeft, ArrowRight, CalendarDays, Check, ChevronDown, Clock3, MapPin, Pencil, Plus, Trash2, UserPlus, X } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ConfirmDialog, EmptyState, ErrorBanner, FieldError, formatDate, formatTime, PageHeader, Spinner, StatusBadge } from '../components/common'
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
 import { ApiError, get, patch, post, put, remove } from '../lib/api'
+import { formDraftKey, useFormDraft } from '../hooks/useFormDraft'
 import type { Assignment, Game, Pagination, Referee, Venue } from '../types'
 
 interface GameForm {
@@ -20,13 +21,18 @@ interface GameForm {
 
 const blankGame: GameForm = { venue_id: '', home_team: '', away_team: '', category: '', starts_at: '', ends_at: '', referee_slots: '3', notes: '' }
 const emptyFilters = { search: '', status: '', category: '', venue_id: '', date: '' }
+const gameDraftFields: readonly (keyof GameForm)[] = ['venue_id', 'home_team', 'away_team', 'category', 'starts_at', 'ends_at', 'referee_slots', 'notes']
+const gameFilterFields = ['search', 'status', 'category', 'venue_id', 'date'] as const
+const blankAssignmentDraft = { refereeId: '', position: 'Crew Chief', fee: '' }
+const assignmentDraftFields = ['refereeId', 'position', 'fee'] as const
 
 export function GamesPage() {
   const { user } = useAuth()
   const { notify } = useToast()
   const [games, setGames] = useState<Pagination<Game> | null>(null)
   const [venues, setVenues] = useState<Venue[]>([])
-  const [filters, setFilters] = useState(emptyFilters)
+  const [filters, setFilters] = useFormDraft(formDraftKey('games-filters', user?.id), emptyFilters, gameFilterFields)
+  const initialFilters = useRef(filters)
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -50,7 +56,7 @@ export function GamesPage() {
   }, [])
 
   useEffect(() => {
-    void load(1, emptyFilters)
+    void load(1, initialFilters.current)
     get<{ data: Venue[] }>('/venues').then((response) => setVenues(response.data)).catch(() => setVenues([]))
   }, [load])
 
@@ -113,27 +119,33 @@ export function GamesPage() {
 
 export function GameFormPage() {
   const { gameId } = useParams()
+  const { user } = useAuth()
   const navigate = useNavigate()
   const { notify } = useToast()
   const [venues, setVenues] = useState<Venue[]>([])
-  const [form, setForm] = useState<GameForm>(blankGame)
+  const [form, setForm, clearDraft, hasDraft] = useFormDraft(formDraftKey(`game-form:${gameId ?? 'new'}`, user?.id), blankGame, gameDraftFields)
+  const hasDraftRef = useRef(hasDraft)
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [loading, setLoading] = useState(Boolean(gameId))
   const [busy, setBusy] = useState(false)
 
+  useEffect(() => { hasDraftRef.current = hasDraft }, [hasDraft])
+
   useEffect(() => {
     get<{ data: Venue[] }>('/venues').then((response) => setVenues(response.data)).catch(() => setVenues([]))
-    if (gameId) get<{ data: Game }>(`/games/${gameId}`).then(({ data }) => setForm({
-      venue_id: String(data.venue?.id ?? ''),
-      home_team: data.home_team,
-      away_team: data.away_team,
-      category: data.category,
-      starts_at: toDateTimeInput(data.starts_at),
-      ends_at: toDateTimeInput(data.ends_at),
-      referee_slots: String(data.referee_slots),
-      notes: data.notes ?? '',
-    })).catch(() => notify('error', 'Unable to load this game.')).finally(() => setLoading(false))
-  }, [gameId, notify])
+    if (gameId) get<{ data: Game }>(`/games/${gameId}`).then(({ data }) => {
+      if (!hasDraftRef.current) clearDraft({
+        venue_id: String(data.venue?.id ?? ''),
+        home_team: data.home_team,
+        away_team: data.away_team,
+        category: data.category,
+        starts_at: toDateTimeInput(data.starts_at),
+        ends_at: toDateTimeInput(data.ends_at),
+        referee_slots: String(data.referee_slots),
+        notes: data.notes ?? '',
+      })
+    }).catch(() => notify('error', 'Unable to load this game.')).finally(() => setLoading(false))
+  }, [clearDraft, gameId, notify])
 
   async function submit(event: FormEvent) {
     event.preventDefault()
@@ -157,6 +169,7 @@ export function GameFormPage() {
     try {
       const response = gameId ? await put<{ data: Game }>(`/games/${gameId}`, payload) : await post<{ data: Game }>('/games', payload)
       notify('success', gameId ? 'Game details updated.' : 'Game scheduled.')
+      clearDraft()
       navigate(`/games/${response.data.id}`)
     } catch (reason) {
       if (reason instanceof ApiError) setErrors(reason.fields)
@@ -199,9 +212,8 @@ export function GameDetailPage() {
   const { notify } = useToast()
   const [game, setGame] = useState<Game | null>(null)
   const [referees, setReferees] = useState<Referee[]>([])
-  const [refereeId, setRefereeId] = useState('')
-  const [position, setPosition] = useState('Crew Chief')
-  const [fee, setFee] = useState('')
+  const [assignmentDraft, setAssignmentDraft, clearAssignmentDraft] = useFormDraft(formDraftKey(`assignment-form:${gameId ?? 'unknown'}`, user?.id), blankAssignmentDraft, assignmentDraftFields)
+  const { refereeId, position, fee } = assignmentDraft
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [errors, setErrors] = useState<Record<string, string[]>>({})
@@ -231,8 +243,8 @@ export function GameDetailPage() {
     try {
       await post(`/games/${gameId}/assignments`, { referee_id: Number(refereeId), position, fee: fee || null })
       notify('success', 'Referee assigned. They can now confirm the invitation.')
-      setRefereeId('')
-      setFee('')
+      clearAssignmentDraft()
+      setAssignmentDraft(blankAssignmentDraft)
       await load()
     } catch (reason) {
       if (reason instanceof ApiError) setErrors(reason.fields)
@@ -293,9 +305,9 @@ export function GameDetailPage() {
           <form className="assign-form" onSubmit={assign}>
             <div className="form-section-title"><span className="section-number"><UserPlus size={16} /></span><div><strong>Assign a referee</strong><p>RefTrack will check availability and schedule conflicts.</p></div></div>
             <div className="form-grid assign-grid">
-              <label className="field"><span>Referee</span><select required value={refereeId} onChange={(event) => setRefereeId(event.target.value)}><option value="">Select a referee</option>{referees.filter((referee) => referee.profile?.status === 'active').map((referee) => <option key={referee.id} value={referee.id}>{referee.name} · {referee.profile?.license_level}</option>)}</select><FieldError errors={errors} name="referee_id" /></label>
-              <label className="field"><span>Position</span><select value={position} onChange={(event) => setPosition(event.target.value)}>{['Crew Chief', 'Referee 1', 'Referee 2'].map((item) => <option value={item} key={item} disabled={assignments.some((assignment) => assignment.position === item)}>{item}{assignments.some((assignment) => assignment.position === item) ? ' · assigned' : ''}</option>)}</select><FieldError errors={errors} name="position" /></label>
-              <label className="field"><span>Fee <small>optional</small></span><input type="number" min="0" step="0.01" value={fee} placeholder="0.00" onChange={(event) => setFee(event.target.value)} /><FieldError errors={errors} name="fee" /></label>
+              <label className="field"><span>Referee</span><select required value={refereeId} onChange={(event) => setAssignmentDraft({ ...assignmentDraft, refereeId: event.target.value })}><option value="">Select a referee</option>{referees.filter((referee) => referee.profile?.status === 'active').map((referee) => <option key={referee.id} value={referee.id}>{referee.name} · {referee.profile?.license_level}</option>)}</select><FieldError errors={errors} name="referee_id" /></label>
+              <label className="field"><span>Position</span><select value={position} onChange={(event) => setAssignmentDraft({ ...assignmentDraft, position: event.target.value })}>{['Crew Chief', 'Referee 1', 'Referee 2'].map((item) => <option value={item} key={item} disabled={assignments.some((assignment) => assignment.position === item)}>{item}{assignments.some((assignment) => assignment.position === item) ? ' · assigned' : ''}</option>)}</select><FieldError errors={errors} name="position" /></label>
+              <label className="field"><span>Fee <small>optional</small></span><input type="number" min="0" step="0.01" value={fee} placeholder="0.00" onChange={(event) => setAssignmentDraft({ ...assignmentDraft, fee: event.target.value })} /><FieldError errors={errors} name="fee" /></label>
               <button className="button button-primary assign-submit" disabled={busy || !refereeId}>{busy ? 'Checking…' : <><UserPlus size={16} /> Assign referee</>}</button>
             </div>
           </form>

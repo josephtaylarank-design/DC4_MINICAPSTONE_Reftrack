@@ -1,17 +1,22 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Search, ShieldCheck, UserRound, UserRoundX } from 'lucide-react'
 import { ConfirmDialog, EmptyState, ErrorBanner, PageHeader, Spinner, StatusBadge } from '../components/common'
+import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
 import { ApiError, get, patch } from '../lib/api'
+import { formDraftKey, useFormDraft } from '../hooks/useFormDraft'
 import type { Pagination, Referee } from '../types'
 
+const blankRefereeFilters = { search: '', license_level: '', status: '' }
+const refereeFilterFields = ['search', 'license_level', 'status'] as const
+
 export function RefereesPage() {
+  const { user } = useAuth()
   const { notify } = useToast()
   const [list, setList] = useState<Pagination<Referee> | null>(null)
-  const [search, setSearch] = useState('')
-  const [license, setLicense] = useState('')
-  const [status, setStatus] = useState('')
-  const [applied, setApplied] = useState({ search: '', license_level: '', status: '' })
+  const [filters, setFilters] = useFormDraft(formDraftKey('referee-filters', user?.id), blankRefereeFilters, refereeFilterFields)
+  const [applied, setApplied] = useState(filters)
+  const initialApplied = useRef(applied)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [changing, setChanging] = useState<Referee | null>(null)
@@ -34,11 +39,11 @@ export function RefereesPage() {
     }
   }
 
-  useEffect(() => { void load() }, [])
+  useEffect(() => { void load(initialApplied.current) }, [])
 
   function apply(event: FormEvent) {
     event.preventDefault()
-    const next = { search, license_level: license, status }
+    const next = filters
     setApplied(next)
     void load(next)
   }
@@ -64,9 +69,9 @@ export function RefereesPage() {
       <PageHeader title="Referees" description="Your officiating roster, license levels, and game experience." />
       <section className="panel filter-panel">
         <form className="filter-form referee-filter-form" onSubmit={apply}>
-          <label className="search-box"><span className="sr-only">Search referees</span><input value={search} placeholder="Search by referee name..." onChange={(event) => setSearch(event.target.value)} /><Search size={16} /></label>
-          <label className="select-wrap"><span className="sr-only">License level</span><select value={license} onChange={(event) => setLicense(event.target.value)}><option value="">All license levels</option>{['Level 1', 'Level 2', 'Level 3', 'Unlicensed'].map((item) => <option key={item}>{item}</option>)}</select></label>
-          <label className="select-wrap"><span className="sr-only">Status</span><select value={status} onChange={(event) => setStatus(event.target.value)}><option value="">All statuses</option><option value="active">Active</option><option value="inactive">Inactive</option></select></label>
+          <label className="search-box"><span className="sr-only">Search referees</span><input value={filters.search} placeholder="Search by referee name..." onChange={(event) => setFilters({ ...filters, search: event.target.value })} /><Search size={16} /></label>
+          <label className="select-wrap"><span className="sr-only">License level</span><select value={filters.license_level} onChange={(event) => setFilters({ ...filters, license_level: event.target.value })}><option value="">All license levels</option>{['Level 1', 'Level 2', 'Level 3', 'Unlicensed'].map((item) => <option key={item}>{item}</option>)}</select></label>
+          <label className="select-wrap"><span className="sr-only">Status</span><select value={filters.status} onChange={(event) => setFilters({ ...filters, status: event.target.value })}><option value="">All statuses</option><option value="active">Active</option><option value="inactive">Inactive</option></select></label>
           <button className="button button-secondary">Apply filters</button>
         </form>
       </section>

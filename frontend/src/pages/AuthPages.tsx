@@ -4,11 +4,17 @@ import { ArrowRight, Eye, EyeOff, Goal, LockKeyhole, Mail, UserRound } from 'luc
 import { ApiError } from '../lib/api'
 import { useAuth } from '../contexts/AuthContext'
 import { FieldError, Spinner } from '../components/common'
+import { formDraftKey, useFormDraft } from '../hooks/useFormDraft'
+
+const blankLoginForm = { email: '', password: '' }
+const loginDraftFields = ['email'] as const
+const blankRegisterForm = { name: '', email: '', phone: '', license_level: '', years_experience: '', password: '', password_confirmation: '' }
+const registerDraftFields = ['name', 'email', 'phone', 'license_level', 'years_experience'] as const
 
 export function LoginPage() {
   const { login, user, loading } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [form, setForm, clearDraft] = useFormDraft(formDraftKey('login'), blankLoginForm, loginDraftFields)
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
@@ -28,6 +34,7 @@ export function LoginPage() {
     setBusy(true)
     try {
       await login(form.email, form.password)
+      clearDraft()
       navigate('/dashboard', { replace: true })
     } catch (error) {
       if (error instanceof ApiError) {
@@ -55,7 +62,7 @@ export function LoginPage() {
 export function RegisterPage() {
   const { register, user, loading } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', email: '', phone: '', license_level: '', years_experience: '', password: '', password_confirmation: '' })
+  const [form, setForm, clearDraft] = useFormDraft(formDraftKey('register'), blankRegisterForm, registerDraftFields)
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
@@ -80,6 +87,7 @@ export function RegisterPage() {
         years_experience: form.years_experience || '0',
         license_level: form.license_level || 'Unlicensed',
       })
+      clearDraft()
       navigate('/dashboard', { replace: true })
     } catch (error) {
       if (error instanceof ApiError) {

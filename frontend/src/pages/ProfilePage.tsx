@@ -1,16 +1,21 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { BadgeCheck, Mail, Phone, Save, UserRound } from 'lucide-react'
 import { FieldError, PageHeader, Spinner, StatusBadge } from '../components/common'
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
 import { ApiError, get, patch } from '../lib/api'
+import { formDraftKey, useFormDraft } from '../hooks/useFormDraft'
 import type { User } from '../types'
+
+const blankProfileForm = { name: '', email: '', phone: '', license_level: '', years_experience: '0' }
+const profileDraftFields = ['name', 'email', 'phone', 'license_level', 'years_experience'] as const
 
 export function ProfilePage() {
   const { user, updateUser } = useAuth()
   const { notify } = useToast()
   const [profile, setProfile] = useState<User | null>(null)
-  const [form, setForm] = useState({ name: '', email: '', phone: '', license_level: '', years_experience: '0' })
+  const [form, setForm, clearDraft, hasDraft] = useFormDraft(formDraftKey('profile-form', user?.id), blankProfileForm, profileDraftFields)
+  const draftWasRestored = useRef(hasDraft)
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
@@ -18,16 +23,16 @@ export function ProfilePage() {
   useEffect(() => {
     get<{ data: User }>('/profile').then(({ data }) => {
       setProfile(data)
-      setForm({
-        name: data.name,
-        email: data.email,
-        phone: data.referee_profile?.phone ?? '',
-        license_level: data.referee_profile?.license_level ?? 'Unlicensed',
-        years_experience: String(data.referee_profile?.years_experience ?? 0),
-      })
+        if (!draftWasRestored.current) clearDraft({
+          name: data.name,
+          email: data.email,
+          phone: data.referee_profile?.phone ?? '',
+          license_level: data.referee_profile?.license_level ?? 'Unlicensed',
+          years_experience: String(data.referee_profile?.years_experience ?? 0),
+        })
     }).catch((reason: unknown) => notify('error', reason instanceof ApiError ? reason.message : 'Unable to load your profile.'))
       .finally(() => setLoading(false))
-  }, [notify])
+  }, [clearDraft, notify])
 
   async function submit(event: FormEvent) {
     event.preventDefault()
@@ -42,6 +47,7 @@ export function ProfilePage() {
       const response = await patch<{ data: User }>('/profile', { ...form, years_experience: Number(form.years_experience) })
       setProfile(response.data)
       updateUser(response.data)
+      clearDraft()
       notify('success', 'Your profile has been updated.')
     } catch (reason) {
       if (reason instanceof ApiError) setErrors(reason.fields)
