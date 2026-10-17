@@ -742,3 +742,167 @@ tbody tr:hover { background: #403222; }
 .dialog-mark { background: #64563c; color: #dbd5ca; }
 .toast-success > svg { color: #939789; }
 .toast-error > svg { color: #d18a76; }
+
+/* Login screen inspired by the RefTrack earth-tone palette */
+.login-screen {
+  background-color: #260b01;
+  background-image:
+    linear-gradient(174deg, transparent 0 61%, rgba(100, 86, 60, .17) 61% 74%, transparent 74%),
+    repeating-linear-gradient(115deg, transparent 0 52px, rgba(100, 86, 60, .13) 52px 96px, transparent 96px 166px),
+    linear-gradient(145deg, #260b01, #35291c 78%, #1b0802);
+  gap: 0;
+  justify-content: center;
+  padding: 34px 18px 29px;
+}
+.login-screen::before {
+  background: radial-gradient(ellipse at 50% 45%, rgba(219, 213, 202, .035), transparent 68%);
+  opacity: 1;
+}
+.login-screen .auth-brand {
+  gap: 13px;
+  margin: 0 0 26px;
+}
+.login-screen .brand-whistle {
+  border-radius: 13px;
+  box-shadow: 0 7px 0 rgba(27, 8, 2, .35);
+  color: #dbd5ca;
+  height: 52px;
+  transform: rotate(-5deg);
+  width: 52px;
+}
+.login-screen .auth-brand strong {
+  font: 800 31px/1 Manrope, sans-serif;
+  letter-spacing: -1.4px;
+}
+.login-screen .auth-brand > span {
+  color: #cbb89c;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  margin-left: 1px;
+}
+.login-screen .login-card {
+  border: 1px solid #51442f;
+  border-radius: 22px;
+  box-shadow: 0 26px 70px rgba(12, 4, 0, .34);
+  max-width: 514px;
+  overflow: hidden;
+  padding: 44px 38px 31px;
+}
+.login-card::before {
+  background: repeating-linear-gradient(90deg, #8d5b2f 0 33px, #1b0802 33px 66px);
+  content: '';
+  height: 14px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.login-card .auth-heading {
+  margin-bottom: 27px;
+}
+.login-card .auth-heading .eyebrow {
+  color: #cbb89c;
+  font-size: 11px;
+  letter-spacing: 1.65px;
+}
+.login-card .auth-heading h1 {
+  color: #dbd5ca;
+  font: italic 700 52px/1.08 Oswald, Impact, sans-serif;
+  letter-spacing: .25px;
+  margin: 11px 0 5px;
+  text-transform: uppercase;
+}
+.login-card .auth-heading p {
+  color: #cbb89c;
+  font-size: 16px;
+  margin-top: 7px;
+}
+.login-card .auth-form {
+  gap: 19px;
+}
+.login-card .auth-form .field {
+  color: #dbd5ca;
+  font-size: 15px;
+  font-weight: 600;
+  gap: 7px;
+}
+.login-card .auth-form .input-with-icon {
+  background: #260b01;
+  border: 2px solid #dbd5ca;
+  border-radius: 15px;
+  color: #8d5b2f;
+  gap: 13px;
+  min-height: 60px;
+  padding: 0 16px;
+}
+.login-card .auth-form .input-with-icon:focus-within {
+  border-color: #cbb89c;
+  box-shadow: 0 0 0 3px rgba(203, 184, 156, .15);
+}
+.login-card .auth-form .input-with-icon svg {
+  flex: 0 0 auto;
+}
+.login-card .auth-form .input-with-icon input {
+  color: #dbd5ca;
+  font-size: 15px;
+  font-weight: 500;
+}
+.login-card .auth-form .input-with-icon input::placeholder {
+  color: #8d7354;
+  opacity: 1;
+}
+.login-card .auth-form .button-wide {
+  background: #8d5b2f;
+  border-radius: 14px;
+  box-shadow: 0 6px 0 #51442f;
+  color: #fffaf1;
+  font: italic 700 22px/1 Oswald, Impact, sans-serif;
+  letter-spacing: .5px;
+  margin-top: 2px;
+  min-height: 62px;
+  text-transform: uppercase;
+}
+.login-card .auth-form .button-wide:hover:not(:disabled) {
+  background: #a36e3f;
+}
+.login-card .auth-form .button-wide:active:not(:disabled) {
+  box-shadow: 0 3px 0 #51442f;
+  transform: translateY(3px);
+}
+.login-card .auth-switch {
+  color: #dbd5ca;
+  font-size: 14px;
+  margin: 26px 0 0;
+}
+.login-card .auth-switch a {
+  color: #cbb89c;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.login-card .auth-switch a:hover {
+  color: #dbd5ca;
+}
+.login-screen .auth-footnote {
+  color: #cbb89c;
+  font: italic 700 20px/1.2 Oswald, Impact, sans-serif;
+  letter-spacing: 1.1px;
+  margin-top: 27px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 580px) {
+  .login-screen { padding: 24px 15px; }
+  .login-screen .auth-brand { margin-bottom: 21px; }
+  .login-screen .auth-brand strong { font-size: 25px; }
+  .login-screen .auth-brand > span { font-size: 8px; letter-spacing: 1px; }
+  .login-screen .brand-whistle { height: 43px; width: 43px; }
+  .login-screen .login-card { border-radius: 19px; padding: 39px 22px 25px; }
+  .login-card .auth-heading h1 { font-size: clamp(39px, 12vw, 48px); }
+  .login-card .auth-heading p { font-size: 14px; }
+  .login-card .auth-form .field { font-size: 13px; }
+  .login-card .auth-form .input-with-icon { min-height: 55px; }
+  .login-card .auth-form .input-with-icon input { font-size: 14px; }
+  .login-card .auth-switch { font-size: 12px; }
+  .login-screen .auth-footnote { font-size: 16px; margin-top: 22px; }
+}

@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { ArrowRight, LockKeyhole, Mail, UserRound } from 'lucide-react'
+import { ArrowRight, Goal, LockKeyhole, Mail, UserRound } from 'lucide-react'
 import { ApiError } from '../lib/api'
 import { useAuth } from '../contexts/AuthContext'
 import { FieldError, Spinner } from '../components/common'
@@ -39,7 +39,7 @@ export function LoginPage() {
   }
 
   return (
-    <AuthFrame title="Welcome back." subtitle="Sign in to manage your season.">
+    <AuthFrame title="Welcome back." subtitle="Sign in to manage your season." login>
       <form className="auth-form" onSubmit={submit} noValidate>
         {message && <div className="error-banner" role="alert">{message}</div>}
         <label className="field"><span>Email address</span><div className="input-with-icon"><Mail size={17} /><input autoComplete="email" type="email" value={form.email} placeholder="you@example.com" onChange={(event) => setForm({ ...form, email: event.target.value })} /></div><FieldError errors={errors} name="email" /></label>
@@ -111,11 +111,11 @@ export function RegisterPage() {
   )
 }
 
-function AuthFrame({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+function AuthFrame({ title, subtitle, children, login = false }: { title: string; subtitle: string; children: React.ReactNode; login?: boolean }) {
   return (
-    <div className="auth-screen">
-      <div className="auth-brand"><div className="brand-mark brand-letter">R</div><strong>reftrack</strong><span>OFFICIALS PORTAL</span></div>
-      <div className="auth-card"><div className="auth-heading"><div className="eyebrow">REFEREE MANAGEMENT SYSTEM</div><h1>{title}</h1><p>{subtitle}</p></div>{children}</div>
+    <div className={`auth-screen${login ? ' login-screen' : ''}`}>
+      <div className="auth-brand"><div className="brand-mark brand-whistle"><Goal size={21} strokeWidth={2.4} /></div><strong>reftrack</strong><span>OFFICIALS PORTAL</span></div>
+      <div className={`auth-card${login ? ' login-card' : ''}`}><div className="auth-heading"><div className="eyebrow">REFEREE MANAGEMENT SYSTEM</div><h1>{title}</h1><p>{subtitle}</p></div>{children}</div>
       <div className="auth-footnote">A better way to run the game.</div>
     </div>
   )
