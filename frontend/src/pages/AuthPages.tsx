@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { ArrowRight, Dumbbell, LockKeyhole, Mail, UserRound } from 'lucide-react'
+import { ArrowRight, LockKeyhole, Mail, UserRound } from 'lucide-react'
 import { ApiError } from '../lib/api'
 import { useAuth } from '../contexts/AuthContext'
 import { FieldError, Spinner } from '../components/common'
@@ -114,7 +114,7 @@ export function RegisterPage() {
 function AuthFrame({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
   return (
     <div className="auth-screen">
-      <div className="auth-brand"><div className="brand-mark"><Dumbbell size={19} /></div><strong>reftrack</strong><span>OFFICIALS PORTAL</span></div>
+      <div className="auth-brand"><div className="brand-mark brand-letter">R</div><strong>reftrack</strong><span>OFFICIALS PORTAL</span></div>
       <div className="auth-card"><div className="auth-heading"><div className="eyebrow">REFEREE MANAGEMENT SYSTEM</div><h1>{title}</h1><p>{subtitle}</p></div>{children}</div>
       <div className="auth-footnote">A better way to run the game.</div>
     </div>

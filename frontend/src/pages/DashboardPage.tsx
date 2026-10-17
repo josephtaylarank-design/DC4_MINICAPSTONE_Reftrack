@@ -77,7 +77,7 @@ function RefereeDashboard({ data }: { data: DashboardResponse }) {
         <div className="panel-heading"><div><h2>Your upcoming assignments</h2><p>Know where to be and when.</p></div><Link className="text-link" to="/my-assignments">View all <ArrowRight size={15} /></Link></div>
         {upcoming.length ? <div className="table-scroll"><table><thead><tr><th>Matchup</th><th>Date & time</th><th>Venue</th><th>Position</th><th>Status</th></tr></thead><tbody>
           {upcoming.map((assignment: Assignment) => <tr key={assignment.id}><td><strong>{assignment.game?.home_team} <span className="muted">vs</span> {assignment.game?.away_team}</strong><small>{assignment.game?.category}</small></td><td>{assignment.game && formatDate(assignment.game.starts_at)}<small>{assignment.game && formatTime(assignment.game.starts_at)}</small></td><td><span className="inline-icon"><MapPin size={14} />{assignment.game?.venue ?? '—'}</span></td><td>{assignment.position}</td><td><StatusBadge status={assignment.status} /></td></tr>)}
-        </tbody></table></div> : <EmptyState title="Your schedule is clear" detail="When you receive an assignment, it will show up here." />}
+        </tbody></table></div> : <div className="assignment-empty">No assignments yet. Set your availability so assigners can invite you.</div>}
       </section>
     </>
   )
