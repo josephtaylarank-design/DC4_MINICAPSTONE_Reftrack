@@ -619,3 +619,126 @@ tbody tr:hover { background: #38210f; }
   .assignment-empty { font-size: 13px; margin: 0 14px; padding: 18px; }
   .page-footer { margin: 0 13px; }
 }
+
+/* RefTrack western earth palette */
+:root {
+  --ink: #dbd5ca;
+  --muted: #cbb89c;
+  --line: #51442f;
+  --paper: #35291c;
+  --canvas: #260b01;
+  --green: #8d5b2f;
+  --green-dark: #744925;
+  --green-soft: #64563c;
+  --navy: #1b0802;
+  --red: #c47766;
+}
+
+body { background: var(--canvas); color: var(--ink); }
+.sidebar { background: var(--navy); color: var(--ink); }
+.brand-mark { background: #8d5b2f; color: #dbd5ca; }
+.brand-lockup strong, .auth-brand strong { color: #dbd5ca; }
+.brand-lockup div:last-of-type span, .sidebar-version { color: #cbb89c; }
+.side-nav a { color: #cbb89c; }
+.side-nav a.active { background: #51442f; color: #dbd5ca; }
+.sidebar-bottom, .page-footer { border-color: #51442f; }
+.sidebar-version, .page-footer { color: #cbb89c; }
+.topbar { background: rgba(38, 11, 1, .96); border-color: #51442f; }
+.crumb { color: #cbb89c; }
+.crumb-divider { color: #8d5b2f; }
+.crumb strong, .user-name strong, .page-header h1 { color: #dbd5ca; }
+.avatar { background: #8d5b2f; color: #dbd5ca; }
+.user-name span, .page-header p { color: #cbb89c; }
+.logout-button { border-color: #64563c; color: #dbd5ca; }
+.logout-button:hover { background: #64563c; color: #dbd5ca; }
+.eyebrow, .welcome-kicker { color: #cbb89c; }
+.button-primary { background: #8d5b2f; color: #fffaf1; }
+.button-primary:hover:not(:disabled) { background: #a36e3f; }
+.button-secondary { background: #35291c; border-color: #64563c; color: #dbd5ca; }
+.button-secondary:hover:not(:disabled) { background: #51442f; border-color: #8d5b2f; }
+.button-quiet { color: #cbb89c; }
+.button-quiet:hover:not(:disabled) { background: #35291c; }
+.back-link, .text-link, .small-action, .table-link, .dashboard-footnote > a { color: #cbb89c; }
+.back-link:hover, .text-link:hover, .small-action:hover { color: #dbd5ca; }
+.panel, .stat-card, .filter-panel, .form-panel, .profile-form, .game-summary, .assignment-card, .venue-card {
+  background: #35291c;
+  border-color: #51442f;
+}
+.stat-card { box-shadow: 0 12px 28px rgba(0, 0, 0, .12); }
+.stat-top, .stat-note, .panel-heading p, .table-panel-heading span, .inline-icon, .assignment-meta,
+.profile-mini-info span, .dashboard-footnote, .crew-role span, .open-position, .assignment-category {
+  color: #cbb89c;
+}
+.stat-icon { border-radius: 13px; }
+.stat-lavender { background: #939789; color: #260b01; }
+.stat-peach { background: #8d5b2f; color: #dbd5ca; }
+.stat-blue { background: #64563c; color: #dbd5ca; }
+.stat-mint { background: #939789; color: #260b01; }
+.stat-value, .panel-heading h2, .table-panel-heading strong, .profile-card h2, .assignment-main h2,
+.confirm-dialog h2, .crew-role strong, .form-section-title > div > strong, .venue-info strong,
+.availability-item > div strong {
+  color: #dbd5ca;
+}
+.welcome-stat { background: linear-gradient(145deg, #64563c, #35291c); border-color: #64563c; }
+.welcome-stat strong { color: #dbd5ca; }
+.welcome-stat a { color: #dbd5ca; }
+.assignment-empty { border-color: #64563c; color: #cbb89c; }
+.dashboard-footnote > span svg { color: #939789; }
+.panel-heading-icon, .empty-icon, .license-tag, .roster-tag, .coverage-pill, .assignment-date-block {
+  background: #51442f;
+  color: #dbd5ca;
+}
+.coverage-needed, .status-pending { background: #64563c; color: #dbd5ca; }
+.status-scheduled, .status-accepted, .status-active { background: #46503e; color: #dbd5ca; }
+.status-declined, .status-cancelled, .status-inactive { background: #593228; color: #f0d3c8; }
+.status-completed { background: #51442f; color: #dbd5ca; }
+thead { background: #2b1609; }
+th { color: #cbb89c; }
+td { border-color: #51442f; color: #dbd5ca; }
+td strong, .pagination-bar strong, .game-notes strong { color: #dbd5ca; }
+td small, .muted, .pagination-bar { color: #cbb89c; }
+tbody tr:hover { background: #403222; }
+.crew-divider, .game-status-actions, .game-notes, .profile-card-rule, .crew-row, .availability-item {
+  border-color: #51442f;
+}
+.search-box, .select-wrap, .date-filter, .assignment-toolbar select, .field input, .field select, .field textarea {
+  background: #260b01;
+  border-color: #64563c;
+  color: #dbd5ca;
+}
+.search-box input, .select-wrap select, .date-filter input { color: #dbd5ca; }
+.search-box input::placeholder, .field input::placeholder, .field textarea::placeholder,
+.venue-info > span, .venue-info small, .availability-item > div span { color: #cbb89c; }
+.field { color: #dbd5ca; }
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: #939789;
+  box-shadow: 0 0 0 3px rgba(147, 151, 137, .16);
+}
+.error-banner { background: #49271d; border-color: #76503e; color: #f0d3c8; }
+.empty-state { color: #cbb89c; }
+.empty-state strong { color: #dbd5ca; }
+.spin, .icon-button:hover { color: #939789; }
+.icon-button:hover { background: #51442f; }
+.icon-button.icon-danger:hover { background: #593228; color: #f0d3c8; }
+.small-action.danger-text, .danger-text { color: #d18a76; }
+.crew-role span, .open-position, .assignment-category, .profile-card > p, .profile-mini-info svg { color: #cbb89c; }
+.availability-hint { background: #403222; color: #cbb89c; }
+.is-available { background: #46503e; color: #dbd5ca; }
+.is-unavailable { background: #593228; color: #f0d3c8; }
+.text-available { color: #c5c8b9; }
+.text-unavailable { color: #e3b5a7; }
+.profile-avatar { background: #64563c; border-color: #51442f; color: #dbd5ca; }
+.auth-screen {
+  background: radial-gradient(ellipse at 14% 9%, rgba(147, 151, 137, .12), transparent 37%),
+    linear-gradient(135deg, #260b01 0%, #35291c 55%, #1b0802 100%);
+}
+.auth-screen::before { background-image: radial-gradient(rgba(219, 213, 202, .12) .7px, transparent .7px); }
+.auth-brand > span, .auth-footnote { color: #cbb89c; }
+.auth-card, .confirm-dialog, .toast { background: #35291c; border-color: #64563c; color: #dbd5ca; }
+.auth-heading .eyebrow, .auth-switch a { color: #cbb89c; }
+.auth-heading h1, .confirm-dialog h2 { color: #dbd5ca; }
+.auth-heading p, .auth-switch, .confirm-dialog p { color: #cbb89c; }
+.modal-backdrop { background: rgba(20, 7, 1, .76); }
+.dialog-mark { background: #64563c; color: #dbd5ca; }
+.toast-success > svg { color: #939789; }
+.toast-error > svg { color: #d18a76; }
